@@ -58,5 +58,13 @@ Future<void> storeTokenAndData(UserCredential userCredential) async
 Future<String?> getToken() async {
   return await storage.read(key: "token");
 }
-
+Future<void> logout() async {
+  try {
+    await _googleSignIn.signOut();
+    await auth.signOut();
+    await storage.delete(key: "token");
+  } catch (e) {
+    
+  }
+}
 }

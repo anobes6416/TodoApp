@@ -1,5 +1,6 @@
 import 'package:todo_app/Service/Auth_Service.dart';
 import 'package:todo_app/pages/HomePage.dart';
+import 'package:todo_app/pages/PhoneAuthPage.dart';
 import 'package:todo_app/pages/SignInPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,7 +27,7 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          color: Colors.black,
+          color: Color.fromARGB(255, 14, 8, 86),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -41,15 +42,14 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 height: 20,
               ),
-              buttonItem("assets/google.svg", "Continue with Google", 25,
-                  () async {
+              buttonItem("assets/google.svg", "Continue with Google", 25, () async {
                 await authClass.googleSignIn(context);
               }),
               SizedBox(
                 height: 15,
               ),
               buttonItem("assets/phone.svg", "Continue with Mobile", 30, () {
-                // Handle continue with mobile logic
+                Navigator.push(context, MaterialPageRoute(builder: (builder) => PhoneAuthPage()));
               }),
               SizedBox(
                 height: 18,
@@ -85,10 +85,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (builder) => SignInPage()),
-                          (route) => false);
+                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => SignInPage()), (route) => false);
                     },
                     child: Text(
                       "Login",
@@ -115,17 +112,12 @@ class _SignUpPageState extends State<SignUpPage> {
           circular = true;
         });
         try {
-          firebase_auth.UserCredential userCredential =
-              await firebaseAuth.createUserWithEmailAndPassword(
-                  email: _emailController.text, password: _pwdController.text);
+          firebase_auth.UserCredential userCredential = await firebaseAuth.createUserWithEmailAndPassword(email: _emailController.text, password: _pwdController.text);
           print(userCredential.user?.email);
           setState(() {
             circular = false;
           });
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (builder) => HomePage()),
-              (route) => false);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomePage()), (route) => false);
         } catch (e) {
           final snackbar = SnackBar(content: Text(e.toString()));
           ScaffoldMessenger.of(context).showSnackBar(snackbar);
@@ -160,21 +152,18 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget buttonItem(
-      String imagepath, String buttonName, double size, VoidCallback onTap) {
+  Widget buttonItem(String imagepath, String buttonName, double size, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       child: Container(
         width: MediaQuery.of(context).size.width - 60,
         height: 60,
         child: Card(
-          color: Colors.black,
+          color: Color.fromARGB(255, 14, 8, 86),
           elevation: 8,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
-            side: BorderSide(
-              width: 1,
-              color: Colors.grey),
+            side: BorderSide(width: 1, color: Colors.grey),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -201,8 +190,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget textItem(
-      String labeltext, TextEditingController controller, bool obscureText) {
+  Widget textItem(String labeltext, TextEditingController controller, bool obscureText) {
     return Container(
       width: MediaQuery.of(context).size.width - 70,
       height: 55,

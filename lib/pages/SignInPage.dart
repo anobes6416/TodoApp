@@ -2,7 +2,7 @@ import 'package:todo_app/pages/SignUpPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-
+import 'package:todo_app/Service/Auth_Service.dart';
 import 'HomePage.dart';
 
 class SignInPage extends StatefulWidget {
@@ -17,6 +17,7 @@ class _SignInPageState extends State<SignInPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _pwdController = TextEditingController();
   bool circular = false;
+  AuthClass authClass = AuthClass();
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +42,7 @@ class _SignInPageState extends State<SignInPage> {
                 height: 20,
               ),
               buttonItem("assets/google.svg", "Continue with Google", 25, () {
+                authClass.googleSignIn(context);
               }),
               SizedBox(
                 height: 15,
@@ -80,10 +82,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (builder) => SignUpPage()),
-                          (route) => false);
+                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => SignUpPage()), (route) => false);
                     },
                     child: Text(
                       "SignUp",
@@ -118,17 +117,12 @@ class _SignInPageState extends State<SignInPage> {
     return InkWell(
       onTap: () async {
         try {
-          firebase_auth.UserCredential userCredential =
-              await firebaseAuth.signInWithEmailAndPassword(
-                  email: _emailController.text, password: _pwdController.text);
+          firebase_auth.UserCredential userCredential = await firebaseAuth.signInWithEmailAndPassword(email: _emailController.text, password: _pwdController.text);
           print(userCredential.user?.email);
           setState(() {
             circular = false;
           });
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (builder) => HomePage()),
-              (route) => false);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomePage()), (route) => false);
         } catch (e) {
           final snackbar = SnackBar(content: Text(e.toString()));
           ScaffoldMessenger.of(context).showSnackBar(snackbar);
@@ -163,14 +157,14 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  Widget buttonItem(
-      String imagepath, String buttonName, double size, Function onTap) {
+  Widget buttonItem(String imagepath, String buttonName, double size, Function() onTap) {
     return InkWell(
+      onTap: onTap,
       child: Container(
         width: MediaQuery.of(context).size.width - 60,
         height: 60,
         child: Card(
-          color: Colors.black,
+          color: Color.fromARGB(255, 14, 8, 86),
           elevation: 8,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -204,8 +198,7 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  Widget textItem(
-      String labeltext, TextEditingController controller, bool obscureText) {
+  Widget textItem(String labeltext, TextEditingController controller, bool obscureText) {
     return Container(
       width: MediaQuery.of(context).size.width - 70,
       height: 55,
