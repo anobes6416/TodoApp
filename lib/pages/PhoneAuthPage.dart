@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:todo_app/Service/Auth_Service.dart';
 
 class PhoneAuthPage extends StatefulWidget {
   const PhoneAuthPage({super.key});
@@ -16,6 +17,10 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   int start = 30;
   bool wait = false;
   String buttonName = "Send";
+  TextEditingController phoneController = TextEditingController();
+  AuthClass authClass = AuthClass();
+  String verificatioinId = "";
+  String smsCode = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,7 +99,11 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                 SizedBox(
                   height: 150,
                 ),
-                Container(
+                InkWell(
+                  onTap: (){
+                    authClass.signInwithPhoneNumber(verificatioinId, smsCode, context);
+                  },
+                child : Container(
                   height: 60,
                   width: MediaQuery.of(context).size.width - 60,
                   decoration: BoxDecoration(
@@ -111,6 +120,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                       ),
                     ),
                   ),
+                ),
             ],
           ),
         ),
@@ -148,6 +158,9 @@ Widget otpField() {
       fieldStyle: FieldStyle.underline,
       onCompleted: (pin) {
         print("Completed: " + pin);
+        setState(() {
+          smsCode = pin;
+        });
       },
     );
   }
@@ -161,6 +174,7 @@ Widget otpField() {
         borderRadius: BorderRadius.circular(15)
         ),
         child: TextFormField(
+          controller: phoneController,
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: "Enter your phone Number",
@@ -176,13 +190,14 @@ Widget otpField() {
               ),
           suffixIcon: InkWell(
             onTap: wait
-            ? null :(){
-              startTimer();
+            ? null :() async {
               setState(() {
                 start = 30;
                 wait = true;
                 buttonName = "Resend";
               });
+              await authClass.verifyPhoneNumber(
+                "+251 ${phoneController.text}", context, setData);
             },
             child : Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
@@ -199,5 +214,12 @@ Widget otpField() {
           ),
         ),
     );
+  }
+  
+  void setData(verificatioinId){
+    setState(() {
+      verificatioinId = verificatioinId;
+    });
+    startTimer();
   }
 }
