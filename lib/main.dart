@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:todo_app/Service/Auth_Service.dart';
-import 'package:todo_app/pages/AddToDo.dart';
 import 'package:todo_app/pages/HomePage.dart';
 import 'package:todo_app/pages/SignInPage.dart';
 import 'pages/SignUpPage.dart';
@@ -44,7 +43,7 @@ void initState() {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AddToDoPage(),
+      home: HomePage(),
     );
   }
 }
